@@ -5,12 +5,17 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from pprint import pprint
 
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+service = ChromeService(ChromeDriverManager().install())
+
+options = webdriver.ChromeOptions()
+options.add_argument('--headless=new')
+
+driver = webdriver.Chrome(service=service, options=options)
 
 driver.get('https://www.brmangas.net/manga/black-clover-online-1/')
 
 
-# Geting the title of the manga
+# Getting manga title
 manga_title = ''
 while True:
     if driver.find_element(By.XPATH, '//*[@id="posttitle"]/div/h1'):
@@ -21,6 +26,7 @@ while True:
                 manga_title += letter.capitalize()
                 manga_title += ' '
         break
+    time.sleep(0.5)
 
 print(manga_title)
 
