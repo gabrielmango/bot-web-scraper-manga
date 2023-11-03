@@ -1,3 +1,4 @@
+import os
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -25,6 +26,7 @@ while True:
             if letter not in ['LER', 'ONLINE']:
                 manga_title += letter.capitalize()
                 manga_title += ' '
+        manga_title = manga_title.strip()
         break
     time.sleep(0.5)
 
@@ -43,3 +45,7 @@ while True:
         break
     time.sleep(1)
 driver.close()
+
+# Create folder to store chapters
+if not os.path.exists(manga_title):
+    os.makedirs(manga_title)
