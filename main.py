@@ -7,14 +7,17 @@ from webdriver_manager.chrome import ChromeDriverManager
 from pprint import pprint
 
 service = ChromeService(ChromeDriverManager().install())
-
 options = webdriver.ChromeOptions()
 options.add_argument('--headless=new')
-
 driver = webdriver.Chrome(service=service, options=options)
 
 driver.get('https://www.brmangas.net/manga/black-clover-online-1/')
 
+def wait_element(value):
+    while True:
+        if driver.find_element(By.CSS_SELECTOR, value):
+            return driver.find_element(By.CSS_SELECTOR, value)
+        time.sleep(1)
 
 # Getting manga title
 manga_title = ''
