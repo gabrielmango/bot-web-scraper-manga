@@ -2,6 +2,8 @@ import os
 import requests
 from PIL import Image
 from selenium import webdriver
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.support.ui import Select
@@ -10,7 +12,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 service = ChromeService(ChromeDriverManager().install())
 options = webdriver.ChromeOptions()
 options.add_argument('--headless=new')
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome(service=service, options=options)
 
 driver.get('https://www.brmangas.net/manga/one-punch-man-online-1/')
 
@@ -102,8 +104,24 @@ for key, value in manga_chapters.items():
     # Rotate images
     for image in os.listdir(folder_chapter):
         if image.endswith('.png'):
-            print('rotate_image executed.')
-            print(image)
             rotate_image(os.path.join(folder_chapter, image))
+
+    # Create pdf
+    list_images = []
+    for image in os.listdir(folder_chapter):
+        if image.endswith('.png'):
+            full_path_image = os.path.join(folder_chapter, image)
+            list_images.append(full_path_image)
+
+    c = canvas.Canvas(folder_chapter + '.pdf', pagesize=letter)
+
+    for image in list_images:
+        img = Image.open(image)
+        width, height = img.size
+        c.setPageSize((width, height))
+        c.drawImage(image, 0, 0, width=width, height=height)
+        c.showPage()
+
+    c.save()
 
 driver.close()
