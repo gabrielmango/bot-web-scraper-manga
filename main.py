@@ -1,5 +1,6 @@
 import os
 import requests
+from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -9,14 +10,24 @@ from webdriver_manager.chrome import ChromeDriverManager
 service = ChromeService(ChromeDriverManager().install())
 options = webdriver.ChromeOptions()
 options.add_argument('--headless=new')
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome(service=service, options=options)
 
-driver.get('https://www.brmangas.net/manga/black-clover-online-1/')
+driver.get('https://www.brmangas.net/manga/one-punch-man-online-1/')
 
 def wait_element(value):
     while True:
         if driver.find_element(By.CSS_SELECTOR, value):
             return driver.find_element(By.CSS_SELECTOR, value)
+        
+
+def rotate_images(full_path_image):
+    image = Image.open(full_path_image)
+    width, height = image.size
+
+    if width > height:
+            rotated_image = image.rotate(-90, expand=True)
+            rotated_image.save(full_path_image)
+            image.close()
 
 # Getting manga title
 manga_title = ''
@@ -76,7 +87,7 @@ for key, value in manga_chapters.items():
     number = 1
     for url in images_urls:
         if url:
-            if manga_title.replace('_', '-') in url:
+            if 'uploads' in url:
                 driver.get(url)
                 image_page = wait_element('body > img')
 
