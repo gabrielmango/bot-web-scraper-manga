@@ -10,7 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 service = ChromeService(ChromeDriverManager().install())
 options = webdriver.ChromeOptions()
 options.add_argument('--headless=new')
-driver = webdriver.Chrome(service=service, options=options)
+driver = webdriver.Chrome(service=service)
 
 driver.get('https://www.brmangas.net/manga/one-punch-man-online-1/')
 
@@ -20,7 +20,7 @@ def wait_element(value):
             return driver.find_element(By.CSS_SELECTOR, value)
         
 
-def rotate_images(full_path_image):
+def rotate_image(full_path_image):
     image = Image.open(full_path_image)
     width, height = image.size
 
@@ -55,7 +55,7 @@ manga_chapters = {
 
 
 # Create folder to store chapters
-folder_manga = manga_title.replace(' ', '_').lower()
+folder_manga = manga_title.replace(' ', '_').replace('-', '_').lower()
 if not os.path.exists(folder_manga):
     os.makedirs(folder_manga)
 
@@ -98,5 +98,12 @@ for key, value in manga_chapters.items():
                     with open(image_name, 'wb') as folder:
                         folder.write(response.content)
                     number += 1
+
+    # Rotate images
+    for image in os.listdir(folder_chapter):
+        if image.endswith('.png'):
+            print('rotate_image executed.')
+            print(image)
+            rotate_image(os.path.join(folder_chapter, image))
 
 driver.close()
