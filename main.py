@@ -28,5 +28,18 @@ while True:
         break
     time.sleep(0.5)
 
+# Getting manga chapters
+manga_chapters = {}
+chapters_xpath = '/html/body/div/div[1]/main/div/div[2]/div[2]/div[2]/div[1]/div[4]/ul'
+while True:
+    if driver.find_element(By.XPATH, chapters_xpath):
+        ul_element = driver.find_element(By.XPATH, chapters_xpath)
+        a_elements = ul_element.find_elements(By.TAG_NAME, 'a')
 
+        manga_chapters = {
+            element.text: element.get_attribute('href')
+            for element in a_elements
+        }
+        break
+    time.sleep(1)
 driver.close()
